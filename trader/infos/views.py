@@ -5,6 +5,8 @@ from rest_framework.response import Response
 import requests
 import pandas as pd
 
+from .serializers import DadosEmpresaSerializer, CotacaoSerializer
+
 class Information(APIView):
     def get(papel, url):
         consolidado_acoes = pd.DataFrame()
@@ -24,11 +26,20 @@ class Information(APIView):
             info_4 = acao[1].iloc[2:, :]
             info_2 = info_2.reset_index(drop=True)
             info_4 = info_4.reset_index(drop=True)
+            cotacao = acao[0].iloc[2:, :1]
             acao = pd.concat([info_1, info_2, info_3, info_4], axis=1, join="inner")
             acao.columns = acao.iloc[0]
             colunaTratada = [coluna.replace("?", "") for coluna in acao.columns]
             acao.columns = colunaTratada
             acao = acao.drop(0)
             consolidado_acoes = consolidado_acoes.append(acao, sort=False)
-        return Response(consolidado_acoes)
+            
+            serializerCotacao = CotacaoSerializer(data=cotacao)
+            serializerDados = DadosEmpresaSerializer(data=consolidado_acoes)
+            if serializerCotacao.is_valid():
+                serializerCotacao.save()
+            if serializerDados.is_valid():
+                serializerDados.save()
+
+        return Response(cotacao)
         

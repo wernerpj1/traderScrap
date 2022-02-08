@@ -16,7 +16,7 @@ class DadosEmpresa(models.Model):
     empresa = models.CharField(max_length=100)
     setor = models.CharField(max_length=150)
     subsetor = models.CharField(max_length=150)
-    cotacao = models.ForeignKey(Cotacao, related_name="cotacaoEmpresa", on_delete=models.CASCADE)
+    cotacao = models.DecimalField(max_digits=10, decimal_places=2)
     volumeMedio = models.DecimalField(max_digits=90, decimal_places=2)
     valorMercado = models.DecimalField(max_digits=900, decimal_places=2)
     valorFirma = models.DecimalField(max_digits=900, decimal_places=2)
